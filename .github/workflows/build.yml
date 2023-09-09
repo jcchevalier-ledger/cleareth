@@ -33,4 +33,4 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/sbt
         with:
-          command: ${{ matrix.component }}/Test/test
+          command: ${{ matrix.component }}/test
