@@ -1,14 +1,13 @@
 package cleareth.model.constraint
 
-import io.github.iltotore.iron.:|
-import io.github.iltotore.iron.Constraint
-import io.github.iltotore.iron.IronType
+import io.github.iltotore.iron.*
 import scala.compiletime.constValue
 import scodec.bits.ByteVector
 
 final class UInt[L <: BitLength]
 
 object UInt:
+
   trait Utils[L <: BitLength, IT <: ByteVector :| UInt[L]] extends ByteVectorUtils[UInt[L], IT]:
     inline def apply(inline short: Short)(using Constraint[ByteVector, UInt[L]]): IT =
       require(short >= 0)
@@ -25,3 +24,7 @@ object UInt:
     inline def apply(inline bigInt: BigInt)(using Constraint[ByteVector, UInt[L]]): IT =
       require(bigInt >= 0)
       applyUnsafe(ByteVector(bigInt.toByteArray).dropWhile(_ == 0))
+
+  given [L <: BitLength]: Constraint[ByteVector, UInt[L]] with
+    inline def test(value: ByteVector): Boolean = value.length * 8 <= constValue[L]
+    inline def message: String                  = s"Expecting ${constValue[L]} bits"

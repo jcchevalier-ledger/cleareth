@@ -4,8 +4,9 @@ import io.github.iltotore.iron.*
 import scodec.bits.ByteVector
 
 private[constraint] trait ByteVectorUtils[C, IT <: ByteVector :| C] extends RefinedTypeOpsImpl[ByteVector, C, IT]:
+
   inline def apply(inline bv: ByteVector)(using Constraint[ByteVector, C]): IT = applyUnsafe(bv)
-  inline def apply(inline str: String)(using Constraint[ByteVector, C]): IT    = applyUnsafe(ByteVector.fromValidHex(str))
+  inline def apply(inline str: String)(using Constraint[ByteVector, C]): IT = applyUnsafe(ByteVector.fromValidHex(str))
 
   inline def from(inline bv: ByteVector)(using Constraint[ByteVector, C]): Option[IT] = option(bv)
   inline def from(inline str: String)(using Constraint[ByteVector, C]): Option[IT] =

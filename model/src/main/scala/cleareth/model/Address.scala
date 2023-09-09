@@ -1,7 +1,6 @@
 package cleareth.model
 
 import cleareth.model.constraint.HexWord
-import cleareth.model.constraint.given
 import io.github.iltotore.iron.*
 import scodec.bits.ByteVector
 

@@ -19,6 +19,7 @@ lazy val dependencies = Seq(
   libraryDependencies ++= Seq(
     `bcprov-jdk18on`,
     `cats-core`,
+    `iron`,
     `scodec-core`
   ),
   libraryDependencies ++= Seq(

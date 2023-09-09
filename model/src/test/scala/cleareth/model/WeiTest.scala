@@ -4,7 +4,7 @@ import cleareth.model.Wei
 import munit.FunSuite
 import scodec.bits.ByteVector
 
-class WeiTest extends FunSuite {
+class WeiTest extends FunSuite:
 
   // String inputs
   val validString: String    = "0x011c4b789027239e20e768827751eed2d66a58af80a4d64165700ca5d8a15d32"
@@ -37,4 +37,3 @@ class WeiTest extends FunSuite {
       s"Invalid hexadecimal character 'g' at index 2"
     )(Wei(nonHexString))
   }
-}
