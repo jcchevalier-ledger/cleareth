@@ -1,0 +1,71 @@
+name: build
+
+on:
+  push:
+    branches:
+      - master
+      - main
+  pull_request:
+
+env:
+  GITHUB_TOKEN: ${{ secrets.CI_BOT_TOKEN }}
+
+jobs:
+
+  check-formatting:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        with:
+          path: |
+            .ivy2
+            .sbt
+          key: cleareth-cache-${{ hashFiles('build.sbt', 'Dependencies.scala', 'plugins.sbt') }}
+          restore-keys: |
+            cleareth-cache-${{ hashFiles('build.sbt', 'Dependencies.scala', 'plugins.sbt') }}
+      - run: sbt scalafmtCheckAll
+
+  test:
+    name: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-java@v2
+        with:
+          distribution: adopt
+          java-version: 14
+      - uses: actions/cache@v3
+        with:
+          path: |
+            .ivy2
+            .sbt
+          key: cleareth-cache-${{ hashFiles('build.sbt', 'Dependencies.scala', 'plugins.sbt') }}
+          restore-keys: |
+            cleareth-cache-${{ hashFiles('build.sbt', 'Dependencies.scala', 'plugins.sbt') }}
+      - run: sbt test
+
+  auto-approve:
+    if: startsWith(github.head_ref, 'update/')
+    runs-on: ubuntu-latest
+    needs:
+      - test
+      - check-formatting
+    steps:
+      - uses: hmarr/auto-approve-action@v2
+
+  auto-merge:
+    if: github.head_ref == 'update/patches'
+    runs-on: ubuntu-latest
+    needs: auto-approve
+    steps:
+      - uses: "pascalgn/automerge-action@v0.14.2"
+        env:
+          MERGE_FILTER_AUTHOR: "ldg-github-ci"
+          MERGE_METHOD: "squash"
+          MERGE_REQUIRED_APPROVALS: 1
+          MERGE_LABELS: ""
+          UPDATE_METHOD: "rebase"
+          MERGE_RETRY_SLEEP: 120000
+          MERGE_DELETE_BRANCH: true
+          MERGE_RETRIES: 10
