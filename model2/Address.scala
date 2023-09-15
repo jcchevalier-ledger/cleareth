@@ -1,4 +1,4 @@
-package cleareth.model
+package cleareth.model2
 
 import cleareth.model.Address.ETH_ADDRESS_LENGTH
 import scala.util.Try

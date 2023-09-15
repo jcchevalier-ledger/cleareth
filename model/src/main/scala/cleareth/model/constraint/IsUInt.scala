@@ -7,7 +7,6 @@ import scodec.bits.ByteVector
 final class IsUInt[L <: BitLength]
 
 object IsUInt:
-
   trait Utils[L <: BitLength, IT <: ByteVector :| IsUInt[L]] extends ByteVectorUtils[IsUInt[L], IT]:
     inline def apply(inline short: Short)(using Constraint[ByteVector, IsUInt[L]]): IT =
       require(short >= 0, s"supplied short should be positive, got $short")

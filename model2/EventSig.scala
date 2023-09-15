@@ -1,4 +1,4 @@
-package cleareth.model
+package cleareth.model2
 
 abstract class EventSig(name: java.lang.String, args: EVMType*) extends Signature(name, args*)
 

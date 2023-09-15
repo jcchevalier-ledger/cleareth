@@ -1,12 +1,9 @@
-package cleareth.model
+package cleareth.model2
 
 import cats.data.State
 import cats.syntax.either.*
-import cleareth.Utils.*
-import cleareth.decoding.DecodingError
-import cleareth.decoding.EvmDecoder
-import cleareth.encoding.EncodingAcc
-import cleareth.encoding.EvmEncoder
+import cleareth.*
+import cleareth.decoding.*
 import java.nio.charset.CharacterCodingException
 import scala.annotation.nowarn
 import scala.compiletime.constValue
@@ -20,8 +17,8 @@ final case class ByteArray[Length](private val value: ByteVector) extends AnyVal
 
 object ByteArray:
 
-  private type Length = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20 | 21 |
-    22 | 23 | 24 | 25 | 26 | 27 | 28 | 29 | 30 | 31 | 32
+  private type Length = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20 |
+    21 | 22 | 23 | 24 | 25 | 26 | 27 | 28 | 29 | 30 | 31 | 32
 
   @nowarn
   inline given [T <: Length]: EvmDecoder[ByteArray[T]] = (bytes: ByteVector) =>

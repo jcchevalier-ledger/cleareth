@@ -1,9 +1,6 @@
-package cleareth
-
 import scodec.bits.ByteVector
 
-object Utils:
-
+package object cleareth:
   val EVM_WORD_LENGTH = 32 // bytes
 
   extension (bytes: ByteVector)

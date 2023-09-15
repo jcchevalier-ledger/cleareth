@@ -1,4 +1,4 @@
-package cleareth.model
+package cleareth.model2
 
 import scodec.*
 import scodec.bits.*

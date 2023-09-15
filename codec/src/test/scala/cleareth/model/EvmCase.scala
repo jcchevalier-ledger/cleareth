@@ -2,7 +2,8 @@ package cleareth.model
 
 import cleareth.decoding.EvmDecoder
 import cleareth.encoding.EvmEncoder
-final case class EvmCase(int: Int, list: List[Int], str: ByteArray[10], str2: String) derives EvmEncoder, EvmDecoder
+import cleareth.model.constraint.HexWord
+final case class EvmCase(int: Int, list: List[Int], str: HexWord[10], str2: String) derives EvmEncoder, EvmDecoder
 
 object EvmCase:
 
@@ -18,4 +19,4 @@ object EvmCase:
     "48656c6c6f2c20576f726c642100000000000000000000000000000000000000"
   )
 
-  val testCase: EvmCase = EvmCase(291, List(1110, 1929), ByteArray[10]("1234567890").toOption.get, "Hello, World!")
+  val testCase: EvmCase = EvmCase(291, List(1110, 1929), HexWord[10]("1234567890").toOption.get, "Hello, World!")

@@ -42,5 +42,5 @@ lazy val `evm-codec` =
     .in(file("codec"))
     .settings(name := "evm-codec")
     .settings(dependencies)
-    // .dependsOn(`evm-model`)
+    .dependsOn(`evm-model`)
     .enablePlugins(JavaServerAppPackaging)

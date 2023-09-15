@@ -1,4 +1,4 @@
-package cleareth.model
+package cleareth.model2
 
 import org.bouncycastle.jcajce.provider.digest.Keccak
 import scodec.bits.ByteVector
