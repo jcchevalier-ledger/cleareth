@@ -7,7 +7,9 @@ import scodec.bits.ByteVector
 final class IsHexWordStrict[L <: ByteLength]
 
 object IsHexWordStrict:
-  trait Utils[L <: ByteLength, IT <: ByteVector :| IsHexWordStrict[L]] extends ByteVectorUtils[IsHexWordStrict[L], IT]
+  trait Utils[L <: ByteLength, IT <: ByteVector :| IsHexWordStrict[L]]
+      extends ByteVectorUtils[IsHexWordStrict[L], IT]
+      with UTF8StringUtils[IsHexWordStrict[L], IT]
 
   given [L <: ByteLength]: Constraint[ByteVector, IsHexWordStrict[L]] with
     inline def test(value: ByteVector): Boolean = value.length == constValue[L]
