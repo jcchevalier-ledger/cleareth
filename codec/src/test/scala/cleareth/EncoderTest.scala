@@ -1,7 +1,7 @@
 package cleareth
 
 import cleareth.*
-import cleareth.encoding.EvmEncoder
+import cleareth.encoding.*
 import cleareth.model.Dummy
 import cleareth.model.EvmCase
 import cleareth.model.EvmCase2

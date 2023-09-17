@@ -5,7 +5,7 @@ ThisBuild / githubOwner      := "LedgerHQ"
 ThisBuild / githubRepository := "cleareth"
 ThisBuild / versionScheme    := Some("semver-spec")
 ThisBuild / organization     := "co.ledger"
-ThisBuild / scalaVersion     := "3.3.1"
+ThisBuild / scalaVersion     := "3.3.0"
 
 addCommandAlias("compileall", ";clean;compile;test:compile;scalafmtAll")
 

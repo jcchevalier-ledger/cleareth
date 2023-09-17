@@ -3,6 +3,7 @@ package cleareth.decoding
 import cats.Functor
 import cats.data.State
 import cats.syntax.traverse.*
+import cleareth.*
 import scala.compiletime.constValue
 import scala.deriving.Mirror
 import scala.reflect.ClassTag
@@ -12,7 +13,7 @@ trait EvmDecoder[A] extends Serializable:
   final def decode(bytes: ByteVector): Either[DecodingError, A] = stateDecode(bytes).runEmptyA.value
   def stateDecode(bytes: ByteVector): State[Long, Either[DecodingError, A]]
 
-object EvmDecoder:
+object EvmDecoder extends EvmDecoderInstances:
 
   given Functor[EvmDecoder] = new Functor[EvmDecoder]:
     override def map[A, B](fa: EvmDecoder[A])(f: A => B): EvmDecoder[B] = (bytes: ByteVector) =>

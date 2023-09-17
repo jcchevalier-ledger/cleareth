@@ -3,7 +3,8 @@ package cleareth.model
 import cleareth.decoding.EvmDecoder
 import cleareth.encoding.EvmEncoder
 
-/** Retrieved from <a href="https://solidity-fr.readthedocs.io/fr/latest/abi-spec.html#use-of-dynamic-types">solidity</a>
+/** Retrieved from <a
+  * href="https://solidity-fr.readthedocs.io/fr/latest/abi-spec.html#use-of-dynamic-types">solidity</a>
   */
 final case class EvmCase2(array1: List[List[Int]], array2: List[String]) derives EvmEncoder, EvmDecoder
 

@@ -11,7 +11,7 @@ trait EvmEncoder[A] extends Serializable:
   def stateEncode(a: A): State[Long, EncodingAcc]
   final def encode(a: A): ByteVector = stateEncode(a).run(nbOfElements * 32).value._2.merge
 
-object EvmEncoder:
+object EvmEncoder extends EvmEncoderInstances:
 
   given Contravariant[EvmEncoder] = new Contravariant[EvmEncoder]:
     override def contramap[A, B](fa: EvmEncoder[A])(f: B => A): EvmEncoder[B] = (b: B) => fa.stateEncode(f(b))

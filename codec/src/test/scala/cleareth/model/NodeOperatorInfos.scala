@@ -43,7 +43,7 @@ object NodeOperatorInfos:
     active = true,
     name = "Staking Facilities",
     rewardAddress = Address(ByteVector.fromValidHex("0xdd4bc51496dc93a0c47008e820e0d80745476f22")),
-    stakingLimit = 8400,
+    stakingLimit = Wei(8400),
     stoppedValidators = 0,
     totalSigningKeys = 8400,
     usedSigningKeys = 7391
