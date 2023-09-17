@@ -11,13 +11,13 @@ opaque type HexWord = ByteVector :| IsHexWord
 object HexWord extends RefinedTypeOpsImpl[ByteVector, IsHexWord, HexWord]:
 
   inline def apply(inline bv: ByteVector): HexWord = applyUnsafe(bv)
-  inline def apply(inline str: String): HexWord    = applyUnsafe(ByteVector.fromValidHex(str))
+  inline def apply(inline str: String): HexWord    = applyUnsafe(ByteVector.fromValidHex(str).padTo(32))
 
   inline def from(inline bv: ByteVector): Option[HexWord] = option(bv)
   inline def from(inline str: String): Option[HexWord] =
     for
       bv   <- ByteVector.fromHex(str)
-      word <- option(bv)
+      word <- option(bv.padTo(32))
     yield word
 
   inline def fromDescriptive(inline bv: ByteVector): Either[String, HexWord] = either(bv)
