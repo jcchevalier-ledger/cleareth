@@ -2,7 +2,6 @@ package cleareth.decoding
 
 import cats.Functor
 import cats.data.State
-import cats.syntax.functor.*
 import cats.syntax.traverse.*
 import scala.compiletime.constValue
 import scala.deriving.Mirror

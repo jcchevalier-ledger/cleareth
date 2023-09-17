@@ -20,21 +20,22 @@ package object encoding:
         case encodeA: EvmEncoder[A] => encodeA
         case _: Mirror.Of[A]        => EvmEncoder.derived[A]
 
-  given EvmEncoder[Int] = (value: Int) =>
+  implicit val intEncoder: EvmEncoder[Int] = (value: Int) =>
     State(offset => offset -> EncodingAcc.static(ByteVector.fromInt(value).padLeft(32)))
 
-  given EvmEncoder[Long] = (value: Long) =>
+  implicit val longEncoder: EvmEncoder[Long] = (value: Long) =>
     State(offset => offset -> EncodingAcc.static(ByteVector.fromLong(value).padLeft(32)))
 
-  given EvmEncoder[BigInt] = (value: BigInt) =>
+  implicit val bigIntEncoder: EvmEncoder[BigInt] = (value: BigInt) =>
     State(offset => offset -> EncodingAcc.static(ByteVector(value.toByteArray).padLeft(32)))
 
-  given EvmEncoder[Address] = (value: Address) => State(offset => offset -> EncodingAcc.static(value.value.padLeft(32)))
+  implicit val addressEncoder: EvmEncoder[Address] = (value: Address) =>
+    State(offset => offset -> EncodingAcc.static(value.value.padLeft(32)))
 
-  given EvmEncoder[Boolean] = (bool: Boolean) =>
+  implicit val booleanEncoder: EvmEncoder[Boolean] = (bool: Boolean) =>
     State(offset => offset -> EncodingAcc.static(ByteVector.fromValidHex(if (bool) "0x01" else "0x00").padLeft(32)))
 
-  given EvmEncoder[String] = (value: String) =>
+  implicit val stringEncoder: EvmEncoder[String] = (value: String) =>
     State { offset =>
       val cont          = ByteVector(value.getBytes)
       val paddedContent = cont.padRight((cont.length / 32 + 1) * 32)
@@ -43,7 +44,7 @@ package object encoding:
       newOffset -> EncodingAcc.dynamic(ByteVector.fromLong(offset).padLeft(32), length ++ paddedContent)
     }
 
-  given [T](using EvmEncoder[T]): EvmEncoder[Seq[T]] = (value: Seq[T]) =>
+  implicit def seqEncoder[T](using EvmEncoder[T]): EvmEncoder[Seq[T]] = (value: Seq[T]) =>
     State { offset =>
       val cont = value
         .map(EvmEncoder[T].stateEncode)
@@ -62,6 +63,6 @@ package object encoding:
       newOffset -> EncodingAcc.dynamic(ByteVector.fromLong(offset).padLeft(32), noOfElements ++ cont)
     }
 
-  given [T](using EvmEncoder[T]): EvmEncoder[Array[T]] = EvmEncoder[Seq[T]].contramap(_.toSeq)
-  given [T](using EvmEncoder[T]): EvmEncoder[List[T]]  = EvmEncoder[Seq[T]].contramap(_.toSeq)
-  given [T](using EvmEncoder[T]): EvmEncoder[Set[T]]   = EvmEncoder[Seq[T]].contramap(_.toSeq)
+  implicit def arrayEncoder[T: EvmEncoder]: EvmEncoder[Array[T]] = EvmEncoder[Seq[T]].contramap(_.toSeq)
+  implicit def setEncoder[T: EvmEncoder]: EvmEncoder[Set[T]]     = EvmEncoder[Seq[T]].contramap(_.toSeq)
+  implicit def listEncoder[T: EvmEncoder]: EvmEncoder[List[T]]   = EvmEncoder[Seq[T]].contramap(_.toSeq)

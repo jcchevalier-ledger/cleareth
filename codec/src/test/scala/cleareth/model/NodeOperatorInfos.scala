@@ -8,7 +8,7 @@ final case class NodeOperatorInfos(
     active: Boolean,
     name: String,
     rewardAddress: Address,
-    stakingLimit: BigInt,
+    stakingLimit: Wei,
     stoppedValidators: BigInt,
     totalSigningKeys: BigInt,
     usedSigningKeys: BigInt

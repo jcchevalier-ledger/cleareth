@@ -9,6 +9,7 @@ import cleareth.model.*
 import scala.compiletime.erasedValue
 import scala.compiletime.summonFrom
 import scala.deriving.Mirror
+import scala.language.implicitConversions
 import scala.reflect.ClassTag
 import scala.util.Try
 import scodec.bits.ByteVector
@@ -24,15 +25,10 @@ package object decoding:
         case encodeA: EvmDecoder[A] => encodeA
         case _: Mirror.Of[A]        => EvmDecoder.derived[A]
 
-  given EvmDecoder[ByteVector] = (bytes: ByteVector) =>
-    State { offset =>
-      (
-        offset + EVM_WORD_LENGTH,
-        Right(bytes.takeWordAt(offset))
-      )
-    }
+  implicit val byteVectorDecoder: EvmDecoder[ByteVector] = (bytes: ByteVector) =>
+    State(offset => offset + EVM_WORD_LENGTH -> Right(bytes.takeWordAt(offset)))
 
-  given EvmDecoder[Int] = new EvmDecoder[Int]:
+  implicit val intDecoder: EvmDecoder[Int] = new EvmDecoder[Int]:
     private val paddingLength = EVM_WORD_LENGTH - 4
     private val padding       = ByteVector.low(paddingLength)
 
@@ -52,7 +48,7 @@ package object decoding:
         )
       }
 
-  given EvmDecoder[Long] = new EvmDecoder[Long]:
+  implicit val longDecoder: EvmDecoder[Long] = new EvmDecoder[Long]:
     private val paddingLength = EVM_WORD_LENGTH - 8
     private val padding       = ByteVector.low(paddingLength)
 
@@ -72,23 +68,18 @@ package object decoding:
         )
       }
 
-  given EvmDecoder[BigInt] = (bytes: ByteVector) =>
-    State { offset =>
-      (
-        offset + EVM_WORD_LENGTH,
-        Try(BigInt(1, bytes.takeWordAt(offset).toArray)).toEither.leftMap(DecodingError.apply(bytes))
-      )
-    }
+  implicit val bigIntDecoder: EvmDecoder[BigInt] = (bytes: ByteVector) =>
+    State(offset =>
+      offset + EVM_WORD_LENGTH -> Try(BigInt(1, bytes.takeWordAt(offset).toArray)).toEither
+        .leftMap(DecodingError.apply(bytes))
+    )
 
-  given EvmDecoder[Address] = (bytes: ByteVector) =>
-    State { offset =>
-      (
-        offset + EVM_WORD_LENGTH,
-        Address.either(bytes.takeWordAt(offset)).leftMap(DecodingError.apply(bytes))
-      )
-    }
+  implicit val addressDecoder: EvmDecoder[Address] = (bytes: ByteVector) =>
+    State(offset =>
+      offset + EVM_WORD_LENGTH -> Address.either(bytes.takeWordAt(offset)).leftMap(DecodingError.apply(bytes))
+    )
 
-  given EvmDecoder[Boolean] = new EvmDecoder[Boolean]:
+  implicit val booleanDecoder: EvmDecoder[Boolean] = new EvmDecoder[Boolean]:
     private val FALSE = ByteVector.fromValidHex("0x00").padLeft(EVM_WORD_LENGTH)
     private val TRUE  = ByteVector.fromValidHex("0x01").padLeft(EVM_WORD_LENGTH)
 
@@ -103,7 +94,7 @@ package object decoding:
         )
       }
 
-  given EvmDecoder[String] = (bytes: ByteVector) =>
+  implicit val stringDecoder: EvmDecoder[String] = (bytes: ByteVector) =>
     State { offset =>
       val newOffset = offset + EVM_WORD_LENGTH
       (
@@ -125,7 +116,7 @@ package object decoding:
       )
     }
 
-  given [T](using EvmDecoder[T]): EvmDecoder[Seq[T]] = (bytes: ByteVector) =>
+  implicit def seqDecoder[T](using EvmDecoder[T]): EvmDecoder[Seq[T]] = (bytes: ByteVector) =>
     State { offset =>
       (
         offset + EVM_WORD_LENGTH,
@@ -146,6 +137,6 @@ package object decoding:
       )
     }
 
-  given [T: EvmDecoder: ClassTag]: EvmDecoder[Array[T]] = EvmDecoder[Seq[T]].map(_.toArray)
-  given [T: EvmDecoder]: EvmDecoder[Set[T]]             = EvmDecoder[Seq[T]].map(_.toSet)
-  given [T: EvmDecoder]: EvmDecoder[List[T]]            = EvmDecoder[Seq[T]].map(_.toList)
+  implicit def arrayDecoder[T: EvmDecoder: ClassTag]: EvmDecoder[Array[T]] = EvmDecoder[Seq[T]].map(_.toArray)
+  implicit def setDecoder[T: EvmDecoder]: EvmDecoder[Set[T]]               = EvmDecoder[Seq[T]].map(_.toSet)
+  implicit def listDecoder[T: EvmDecoder]: EvmDecoder[List[T]]             = EvmDecoder[Seq[T]].map(_.toList)

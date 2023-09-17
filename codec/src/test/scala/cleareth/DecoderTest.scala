@@ -23,7 +23,7 @@ class DecoderTest extends FunSuite:
 
   test("should not work when trying to decode a NodeOperatorInfos as a Dummy instance"):
       assertEquals(
-        EvmDecoder[Dummy](ByteVector.fromValidHex(encodedNodeOperatorInfos.mkString)),
+        EvmDecoder[Dummy](ByteVector.fromValidHex(NodeOperatorInfos.encodedNodeOperatorInfos.mkString)),
         Left(
           DecodingError(
             "invalid dynamic offset. it should be >= decoding offset (32)",
