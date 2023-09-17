@@ -22,7 +22,7 @@ object IsUInt:
       applyUnsafe(ByteVector.fromLong(long))
 
     inline def apply(inline bigInt: BigInt)(using Constraint[ByteVector, IsUInt[L]]): IT =
-      require(bigInt >= 0, s"supplied bigInt should be positive, got $bigInt")
+      require(bigInt >= zero, s"supplied bigInt should be positive, got $bigInt")
       applyUnsafe(ByteVector(bigInt.toByteArray).dropWhile(_ == 0))
 
     inline def from(inline short: Short)(using Constraint[ByteVector, IsUInt[L]]): Option[IT] =
@@ -38,7 +38,7 @@ object IsUInt:
       option(ByteVector.fromLong(long))
 
     inline def from(inline bigInt: BigInt)(using Constraint[ByteVector, IsUInt[L]]): Option[IT] =
-      require(bigInt >= 0, s"supplied bigInt should be positive, got $bigInt")
+      require(bigInt >= zero, s"supplied bigInt should be positive, got $bigInt")
       option(ByteVector(bigInt.toByteArray).dropWhile(_ == 0))
 
     inline def fromDescriptive(inline short: Short)(using Constraint[ByteVector, IsUInt[L]]): Either[String, IT] =
@@ -54,9 +54,11 @@ object IsUInt:
       either(ByteVector.fromLong(long))
 
     inline def fromDescriptive(inline bigInt: BigInt)(using Constraint[ByteVector, IsUInt[L]]): Either[String, IT] =
-      require(bigInt >= 0, s"supplied bigInt should be positive, got $bigInt")
+      require(bigInt >= zero, s"supplied bigInt should be positive, got $bigInt")
       either(ByteVector(bigInt.toByteArray).dropWhile(_ == 0))
 
   given [L <: BitLength]: Constraint[ByteVector, IsUInt[L]] with
     inline def test(value: ByteVector): Boolean = value.length * 8 <= constValue[L]
     inline def message: String                  = s"Expecting ${constValue[L]} bits"
+
+  private val zero = BigInt(0)
